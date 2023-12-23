@@ -1,0 +1,31 @@
+WITH VolumeAnoAnterior AS (
+    SELECT
+        c.C_Matriz,
+        SUM(l.Volume) AS Vol_TAA
+    FROM
+        Clientes c
+    JOIN
+        Lancamento l ON c.IDCliente = l.IDCliente
+    WHERE
+        l.Dt_lancamento >= DATEADD(YEAR, -2, GETDATE()) AND l.Dt_lancamento < DATEADD(YEAR, -1, GETDATE())
+    GROUP BY
+        c.C_Matriz,
+)
+SELECT
+    c.C_Matriz,,
+    VA.Vol_TAA AS Vol_AA,
+    SUM(l.Volume) AS Vol_TUA
+FROM
+    Clientes c
+JOIN
+    Lancamento l ON c.IDCliente = l.IDCliente
+JOIN
+   Vol_AA VA ON c.C_Matriz, = VA.C_Matriz,
+WHERE
+    l.Dt_lancamento >= DATEADD(YEAR, -1, GETDATE())
+GROUP BY
+    c.C_Matriz,, VA.Vol_TAA
+HAVING
+    SUM(l.Volume) > VA.Vol_TAA
+ORDER BY
+    Vol_TUA DESC;
